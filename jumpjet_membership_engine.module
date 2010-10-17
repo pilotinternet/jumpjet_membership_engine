@@ -1,0 +1,109 @@
+<?php
+
+include_once('jumpjet_membership_engine.features.inc');
+
+
+/**
+ * tried injecting an extra tab for user edit page to display the workflow but
+ * it failed because it just hid the other two tabs (account and member) - could be
+ * that there was a conflict with content_profile so will try just entering membership
+ * status onto user view page
+ *
+ */
+function jumpjet_membership_engine_menu(){
+  $items['user/%user/edit/member-workflow'] = array(
+    'title' => 'Membership status',
+    'type' => MENU_LOCAL_TASK,
+    'access callback' => 'jumpjet_membership_engine_workflow_tab_access',
+    'access arguments' => array(1),
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('jumpjet_membership_engine_wfform', 1),
+    'weight' => 3,
+  );
+  //return $items;
+}
+
+
+/**
+ * change Workflow to something else but only on membership page
+ */
+function phptemplate_menu_item_link($link) {
+  if (empty($link['localized_options'])) {
+    $link['localized_options'] = array();
+  }
+  if ($link['title'] == 'Workflow'){
+    $newtitle = t("Membership");
+  }
+  else {
+    $newtitle = $link['title'];
+  }
+  return l($newtitle, $link['href'], $link['localized_options']);
+}
+
+
+
+function jumpjet_membership_engine_wfform($form_state, $user){
+  $form['item'] = array(
+    '#type' => 'textfield',
+    '#title' => 'item',
+  );
+  return $form;
+}
+
+function jumpjet_membership_engine_workflow_tab_access($user = null){
+  return true;
+}
+/**
+ * this works but just hides everything else - at a pinch I could presumably
+ * put other tabs back with a function
+ *
+ */
+function jumpjet_membership_engine_workflow_history($user = null){
+ $uid =$user->uid;
+ drupal_set_title(check_plain($user->name));
+ $output = "hello $uid";
+ return $output;
+}
+
+function jumpjet_membership_engine_user($op, &$edit, &$account, $category = null){
+
+  switch ($op){
+    case 'view':
+      //print_r($account);
+      $uid = $account->uid;
+      $account->content['jumpjet_membership_extra'] = _jumpjet_membership_engine_userstuff($uid);
+      break;
+  }
+}
+
+
+function _jumpjet_membership_engine_userstuff($uid = null){
+  $content = array();
+  $content['#theme'] = 'jumpjet_membership_engine_userstuff';
+  $content['#weight'] = '2';
+  $content['#value'] = "here is the workflow for $uid";
+  $content['#content_type'] = "jumpjet_membership";
+  $content['#uid'] = $uid;
+  return $content;
+}
+
+
+/**
+ * Theme function copied from the content_profile display as link
+ */
+function theme_jumpjet_membership_engine_userstuff($element) {
+  if ($node = content_profile_load($element['#content_type'], $element['#uid'])) {
+    if (node_access('view', $node)) {
+      $output = l(node_get_types('name', $node->type).' status', 'node/'. $node->nid.'/workflow');
+      return $output;
+    }
+  }
+}
+
+function jumpjet_membership_engine_theme() {
+  return array(
+    'jumpjet_membership_engine_userstuff' => array(
+      'arguments' => array('items' => NULL)
+    ),
+  );
+}
