@@ -10,15 +10,9 @@ function jumpjet_membership_engine_install(){
   $modules = array('autoassignrole');
   drupal_install_modules($modules);
 
-  $strsql = "INSERT INTO `autoassignrole` VALUES ('auto_active','0'),('auto_admin_active','0'),
-    ('auto_roles','a:8:{i:10;i:0;i:8;i:0;i:5;i:0;i:6;i:0;i:7;i:0;i:9;i:0;i:4;i:0;i:3;i:0;}'),
-    ('node_user_register',''),('page_active','0'),('user_active','0'),('user_description',''),
-    ('user_fieldset_title','User Roles'),('user_multiple','0'),('user_required','0'),
-    'user_roles','a:8:{i:10;i:0;i:8;i:0;i:5;i:0;i:6;i:0;i:7;i:0;i:9;i:0;i:4;i:0;i:3;i:0;}'),
-    ('user_selection','2'),('user_sort','SORT_ASC'),('user_title','Role');";
+  $strsql = "INSERT INTO `autoassignrole` VALUES ('auto_active','0'),('auto_admin_active','0'),('auto_roles','a:8:{i:10;i:0;i:8;i:0;i:5;i:0;i:6;i:0;i:7;i:0;i:9;i:0;i:4;i:0;i:3;i:0;}'),('node_user_register',''),('page_active','0'),('user_active','0'),('user_description',''),('user_fieldset_title','User Roles'),('user_multiple','0'),('user_required','0'),('user_roles','a:8:{i:10;i:0;i:8;i:0;i:5;i:0;i:6;i:0;i:7;i:0;i:9;i:0;i:4;i:0;i:3;i:0;}'),('user_selection','2'),('user_sort','SORT_ASC'),('user_title','Role');";
   db_query($strsql);
   
-  $strsql_2 = "INSERT INTO `autoassignrole_page` VALUES 
-    ('10','0','membership/apply','admin','Membership sign up','','1','0','0');";
+  $strsql_2 = "INSERT INTO `autoassignrole_page` VALUES ('10','0','membership/apply','admin','Apply for membership','<br />\r\n','1','0','0');";
   db_query($strsql_2);
 }  
